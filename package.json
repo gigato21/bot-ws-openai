@@ -1,9 +1,4 @@
 {
-"scripts": {
-  "start": "node app.js",
-  "build": "echo 'No build step needed'"
-}
-  
   "name": "base-bailey-memory",
   "version": "1.0.0",
   "description": "WhatsApp bot using Baileys and OpenRouter",
@@ -30,6 +25,5 @@
     "mime-types": "2.1.35",
     "openai": "^3.2.1",
     "wa-sticker-formatter": "4.4.4"
-    
   }
 }
