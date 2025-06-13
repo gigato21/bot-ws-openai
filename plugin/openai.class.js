@@ -1,17 +1,26 @@
 class OpenAiClass {
-    openAiOptions = { model: '', temperature: 0, apiKey: '' }
+    openAiOptions = {
+        model: '',
+        temperature: 0,
+        apiKey: '',
+        baseURL: 'https://api.openai.com/v1' // valor por defecto
+    }
 
-    constructor(_options = { model: 'gpt-3.5-turbo-0301', temperature: 0, apiKey: '' }) {
+    constructor(_options = {
+        model: 'gpt-3.5-turbo-0301',
+        temperature: 0,
+        apiKey: '',
+        baseURL: 'https://api.openai.com/v1'
+    }) {
         if (!_options?.apiKey) {
-            throw new Error('apiKey no pude ser vacio')
+            throw new Error('apiKey no puede ser vacío')
         }
 
         this.openAiOptions = { ...this.openAiOptions, ..._options }
     }
 
     /**
-     *
-     * @returns
+     * Construye encabezados HTTP
      */
     buildHeader = () => {
         const headers = new Headers()
@@ -21,29 +30,29 @@ class OpenAiClass {
     }
 
     /**
-     *
+     * Enviar solicitud de embedding
      * @param {*} input
+     * @param {*} model
+     * @returns
      */
     sendEmbedding = async (input, model = 'text-embedding-ada-002') => {
         const headers = this.buildHeader()
-        const raw = JSON.stringify({
-            input,
-            model,
-        })
+        const raw = JSON.stringify({ input, model })
 
         const requestOptions = {
             method: 'POST',
-            headers: headers,
+            headers,
             body: raw,
             redirect: 'follow',
         }
 
-        const response = await fetch('https://api.openai.com/v1/embeddings', requestOptions)
+        const url = `${this.openAiOptions.baseURL}/embeddings`
+        const response = await fetch(url, requestOptions)
         return response.json()
     }
 
     /**
-     *
+     * Enviar chat tipo conversación
      * @param {*} messages
      * @returns
      */
@@ -63,11 +72,13 @@ class OpenAiClass {
             redirect: 'follow',
         }
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', requestOptions)
+        const url = `${this.openAiOptions.baseURL}/chat/completions`
+        const response = await fetch(url, requestOptions)
         return response.json()
     }
+
     /**
-     *
+     * Enviar prompt para modelo de completion
      * @param {*} prompt
      * @returns
      */
@@ -77,7 +88,7 @@ class OpenAiClass {
         const raw = JSON.stringify({
             model: this.openAiOptions.model,
             temperature: this.openAiOptions.temperature,
-            prompt
+            prompt,
         })
 
         const requestOptions = {
@@ -87,7 +98,8 @@ class OpenAiClass {
             redirect: 'follow',
         }
 
-        const response = await fetch('https://api.openai.com/v1/completions', requestOptions)
+        const url = `${this.openAiOptions.baseURL}/completions`
+        const response = await fetch(url, requestOptions)
         return response.json()
     }
 }
