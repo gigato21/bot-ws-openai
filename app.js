@@ -15,9 +15,10 @@ const { handlerAI } = require("./utils");
 const { textToVoice } = require("./services/eventlab");
 
 const employeesAddonConfig = {
-  model: "gpt-4-0613",
-  temperature: 0,
-  apiKey: process.env.OPENAI_API_KEY,
+  model: "qwen/qwen3-32b:free", // ✅ Modelo de OpenRouter
+  temperature: 0.7,
+  apiKey: process.env.OPENAI_API_KEY, // ✅ Asegúrate de poner tu clave de OpenRouter aquí
+  baseURL: "https://openrouter.ai/api/v1" // ✅ Endpoint de OpenRouter
 };
 
 const employeesAddon = init(employeesAddonConfig);
@@ -50,20 +51,17 @@ const flowVoiceNote = addKeyword(EVENTS.VOICE_NOTE).addAction(
 
 const main = async () => {
   const adapterDB = new MockAdapter();
-
   const adapterFlow = createFlow([flowVoiceNote, flowStaff]);
-
   const adapterProvider = createProvider(BaileysProvider);
 
   /**
-   * 🤔 Empledos digitales
-   * Imaginar cada empleado descrito con sus deberes de manera explicita
+   * 🤔 Empleados digitales
    */
   const employees = [
     {
       name: "EMPLEADO_STAFF_TOUR",
       description:
-        "Soy Jorge el staff amable encargado de atentender las solicitudes de los viajeros si tienen dudas, preguntas sobre el tour o la ciudad de madrid, mis respuestas son breves.",
+        "Soy Jorge el staff amable encargado de atender las solicitudes de los viajeros si tienen dudas, preguntas sobre el tour o la ciudad de Madrid. Mis respuestas son breves.",
       flow: flowStaff,
     }
   ];
@@ -76,8 +74,7 @@ const main = async () => {
     database: adapterDB,
   });
 
-  QRPortalWeb()
-  
+  QRPortalWeb();
 };
 
 main();
